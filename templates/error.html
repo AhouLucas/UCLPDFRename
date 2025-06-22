@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UCLouvain - Bill Renamer</title>
+    <link rel="icon" type="image/x-icon" href="../static/ucl_logo.ico">
+    <script src="https://kit.fontawesome.com/fbc443b47c.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-message-container {
+            background-color: #fff3f3;
+            border: 1px solid #f5c6cb;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .error-message-suggestion {
+            font-size: 16px;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            color: #d9534f;
+        }
+
+        .home-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #5eb5e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .home-button:hover {
+            background-color: #3b718f;
+        }
+
+        .home-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        .logo {
+            width: 200px;
+            margin-right: 10px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='ucl_logo.png') }}" alt="Logo" class="logo">
+        <h1>PDF Bill Renamer</h1>
+    </div>
+
+    <div class="container">
+        <div class="error-message-container">
+            <p class="error-message">An error occurred while processing your request.</p> 
+            <p class="error-message-suggestion">Please make sure the uploaded zip file and PDF files follows the requirements or try again later</p>
+        </div>
+        <a href="/" class="home-button">
+            <i class="fa-solid fa-house" style="margin-right: 10px;"></i>
+            Go to Home
+        </a>
+    </div>
+</body>
+</html>

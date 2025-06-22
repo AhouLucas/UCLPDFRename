@@ -57,35 +57,46 @@ def rename_and_zip(input_zip):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        if 'zipfile' not in request.files:
-            return "No file part", 400
-        file = request.files['zipfile']
-        if file.filename == '':
-            return "No selected file", 400
+        try: 
+            if 'zipfile' not in request.files:
+                return "No file part", 400
+            file = request.files['zipfile']
+            if file.filename == '':
+                return "No selected file", 400
 
-        # Save uploaded file
-        filename = secure_filename(file.filename)
-        input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(input_path)
+            # Save uploaded file
+            filename = secure_filename(file.filename)
+            input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(input_path)
 
-        # Generate renamed zip
-        output_path = rename_and_zip(input_path)  # should return a filepath
+            # Generate renamed zip
+            output_path = rename_and_zip(input_path)  # should return a filepath
 
-        @after_this_request
-        def cleanup(response):
-            try:
-                os.remove(input_path)
-                os.remove(output_path)
-            except Exception as e:
-                app.logger.warning(f"Cleanup failed: {e}")
-            return response
+            @after_this_request
+            def cleanup(response):
+                try:
+                    os.remove(input_path)
+                    os.remove(output_path)
+                except Exception as e:
+                    app.logger.warning(f"Cleanup failed: {e}")
+                return response
 
-        return send_file(
-            output_path,
-            mimetype='application/zip',
-            as_attachment=True,
-            download_name='FacturesRenamed.zip'
-        )
+            return send_file(
+                output_path,
+                mimetype='application/zip',
+                as_attachment=True,
+                download_name='FacturesRenamed.zip'
+            )
+        except Exception as e:
+            # Cleanup everything in upload folder
+            app.logger.error(f"Error processing file: {e}")
+            for file_name in os.listdir(app.config['UPLOAD_FOLDER']):
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+                try:
+                    os.remove(file_path)
+                except Exception as cleanup_error:
+                    app.logger.error(f"Cleanup failed for {file_name}: {cleanup_error}")
+            return render_template("error.html")
 
     return render_template("index.html")
 
