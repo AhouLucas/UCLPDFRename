@@ -15,7 +15,6 @@ A simple Flask web application that renames PDF bills inside a ZIP archive based
 - Python 3.8+
 - Flask
 - PyMuPDF (`pymupdf`)
-- Gunicorn (for deployment)
 
 Install dependencies:
 
