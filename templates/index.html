@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UCLouvain - Bill Renamer</title>
+    <link rel="icon" type="image/x-icon" href="../static/ucl_logo.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .icon-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: #ccc;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        input[type="file"] {
+            margin: 10px 0 20px;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            background-color: #5eb5e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #3b718f;
+        }
+
+        .logo {
+            width: 200px;
+            margin-right: 10px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='ucl_logo.png') }}" alt="Logo" class="logo">
+        <h1>PDF Bill Renamer</h1>
+    </div>
+
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            <h2>Upload ZIP File of Bills</h2>
+            <div class="file-input-wrapper">
+                <input type="file" name="zipfile" accept=".zip" required>
+            </div>
+            <br>
+            <button type="submit">Upload & Rename</button>
+        </form>
+
+        <div class="explanation">
+            <p>Please upload a ZIP file containing PDF files named in the format:</p>
+            <code>DC_XXXXXXXXXX.pdf</code><br>
+            <p>Example: <code>DC_0045296375.pdf</code></p>
+            <p>The system will extract the recipient name from each PDF and rename it accordingly.</p>
+        </div>
+    </div>
+</body>
+</html>
