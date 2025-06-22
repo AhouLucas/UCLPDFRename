@@ -15,6 +15,21 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 250 MB
+MAX_UNCOMPRESSED_SIZE = 200 * 1024 * 1024  # 200 MB
+
+def is_safe_zip(zip_path):
+    """Check if the zip file is safe to process."""
+    total_uncompressed_size = 0
+    with zipfile.ZipFile(zip_path, 'r') as zin:
+        for info in zin.infolist():
+            total_uncompressed_size += info.file_size
+            if total_uncompressed_size > MAX_UNCOMPRESSED_SIZE:
+                return False
+    
+    print(f"Total uncompressed size: {total_uncompressed_size} bytes")
+    return True
+
 
 def readrecipient(path):
     reader = PdfReader(path)
@@ -59,18 +74,22 @@ def index():
     if request.method == "POST":
         try: 
             if 'zipfile' not in request.files:
-                return "No file part", 400
+                return render_template("error.html", error_message="No file part provided."), 400
             file = request.files['zipfile']
             if file.filename == '':
-                return "No selected file", 400
+                return render_template("error.html", error_message="No file selected."), 400
+
+            # Check file size
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)
+            if file_size > MAX_UPLOAD_SIZE:
+                return render_template("error.html", error_message="File size exceeds the limit of 50 MB."), 400
 
             # Save uploaded file
             filename = secure_filename(file.filename)
             input_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(input_path)
-
-            # Generate renamed zip
-            output_path = rename_and_zip(input_path)  # should return a filepath
 
             @after_this_request
             def cleanup(response):
@@ -80,6 +99,14 @@ def index():
                 except Exception as e:
                     app.logger.warning(f"Cleanup failed: {e}")
                 return response
+
+            # Check for zip bomb
+            if not is_safe_zip(input_path):
+                os.remove(input_path)
+                return render_template("error.html", error_message="The uploaded zip file is too large or contains a zip bomb."), 400
+
+            # Generate renamed zip
+            output_path = rename_and_zip(input_path)  # should return a filepath
 
             return send_file(
                 output_path,
@@ -96,7 +123,7 @@ def index():
                     os.remove(file_path)
                 except Exception as cleanup_error:
                     app.logger.error(f"Cleanup failed for {file_name}: {cleanup_error}")
-            return render_template("error.html")
+            return render_template("error.html", error_message=str(e)), 500
 
     return render_template("index.html")
 

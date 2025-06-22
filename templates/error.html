@@ -27,6 +27,12 @@
             color: #333;
         }
 
+        h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -50,12 +56,12 @@
         .error-message-suggestion {
             font-size: 16px;
             color: #6c757d;
-            margin-top: 10px;
         }
 
         .error-message {
             font-size: 18px;
             color: #d9534f;
+            margin-bottom: 10px;
         }
 
         .home-button {
@@ -101,6 +107,11 @@
         <div class="error-message-container">
             <p class="error-message">An error occurred while processing your request.</p> 
             <p class="error-message-suggestion">Please make sure the uploaded zip file and PDF files follows the requirements or try again later</p>
+
+            <br>
+
+            <h3>Error</h3>
+            <p class="error-message-suggestion">{{ error_message }}</p>
         </div>
         <a href="/" class="home-button">
             <i class="fa-solid fa-house" style="margin-right: 10px;"></i>
